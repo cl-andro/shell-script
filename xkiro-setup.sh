@@ -62,6 +62,30 @@ if [ "$IS_PROOT_DISTRO" = "1" ]; then
     fi
 fi
 
+# Ensure essential dependencies are available (python3 and curl)
+check_dependencies() {
+    local missing=()
+    if ! command -v python3 >/dev/null 2>&1; then
+        missing+=("python3")
+    fi
+    if ! command -v curl >/dev/null 2>&1; then
+        missing+=("curl")
+    fi
+    if [ ${#missing[@]} -gt 0 ]; then
+        log_warn "Missing required packages: ${missing[*]}"
+        if command -v apt-get >/dev/null 2>&1; then
+            log_info "Attempting to install ${missing[*]} via apt-get..."
+            apt-get update && apt-get install -y "${missing[@]}"
+        elif command -v pkg >/dev/null 2>&1; then
+            log_info "Attempting to install ${missing[*]} via pkg..."
+            pkg install -y "${missing[@]}"
+        else
+            log_error "Please install ${missing[*]} manually and run the script again."
+            exit 1
+        fi
+    fi
+}
+
 # Check if opencode is installed
 check_opencode() {
     if command -v opencode >/dev/null 2>&1; then
@@ -980,6 +1004,9 @@ main() {
     log_info "========================================"
     log_info ""
     
+    # Check dependencies (python3 and curl)
+    check_dependencies
+
     # Check if opencode is installed
     if ! check_opencode; then
         install_opencode
