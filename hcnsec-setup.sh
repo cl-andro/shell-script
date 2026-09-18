@@ -248,6 +248,174 @@ all_models = {
         "open_weights": False,
         "limit": {"context": 1000000, "output": 131072},
         "cost": {"input": 0, "output": 0, "cache_read": 0}
+    },
+    "hcnsec/deepseek-v4-flash": {
+        "id": "DeepSeek-V4-Flash",
+        "name": "DeepSeek-V4-Flash",
+        "description": "DeepSeek V4 Flash via HCNsec API",
+        "family": "deepseek",
+        "attachment": True,
+        "reasoning": True,
+        "reasoning_options": [
+            {"type": "toggle"},
+            {"type": "budget_tokens"}
+        ],
+        "tool_call": True,
+        "structured_output": True,
+        "temperature": True,
+        "release_date": "2024-01-01",
+        "last_updated": "2024-01-01",
+        "modalities": {"input": ["text"], "output": ["text"]},
+        "open_weights": False,
+        "limit": {"context": 1000000, "output": 131072},
+        "cost": {"input": 0, "output": 0, "cache_read": 0}
+    },
+    "hcnsec/deepseek-v4-pro": {
+        "id": "DeepSeek-V4-Pro",
+        "name": "DeepSeek-V4-Pro",
+        "description": "DeepSeek V4 Pro via HCNsec API",
+        "family": "deepseek",
+        "attachment": True,
+        "reasoning": True,
+        "reasoning_options": [
+            {"type": "toggle"},
+            {"type": "budget_tokens"}
+        ],
+        "tool_call": True,
+        "structured_output": True,
+        "temperature": True,
+        "release_date": "2024-01-01",
+        "last_updated": "2024-01-01",
+        "modalities": {"input": ["text"], "output": ["text"]},
+        "open_weights": False,
+        "limit": {"context": 1000000, "output": 131072},
+        "cost": {"input": 0, "output": 0, "cache_read": 0}
+    },
+    "hcnsec/spark-x2.5": {
+        "id": "spark-x2.5",
+        "name": "Spark-X2.5",
+        "description": "Spark X2.5 via HCNsec API (Anthropic format)",
+        "family": "anthropic",
+        "attachment": True,
+        "reasoning": True,
+        "reasoning_options": [
+            {"type": "toggle"},
+            {"type": "budget_tokens"}
+        ],
+        "tool_call": True,
+        "structured_output": True,
+        "temperature": True,
+        "release_date": "2024-01-01",
+        "last_updated": "2024-01-01",
+        "modalities": {"input": ["text"], "output": ["text"]},
+        "open_weights": False,
+        "limit": {"context": 1000000, "output": 131072},
+        "cost": {"input": 0, "output": 0, "cache_read": 0}
+    },
+    "hcnsec/glm-5.3-flash": {
+        "id": "glm-5.3-flash",
+        "name": "GLM-5.3-Flash",
+        "description": "GLM-5.3-Flash via HCNsec API",
+        "family": "glm",
+        "attachment": True,
+        "reasoning": True,
+        "reasoning_options": [
+            {"type": "toggle"},
+            {"type": "budget_tokens"}
+        ],
+        "tool_call": True,
+        "structured_output": True,
+        "temperature": True,
+        "release_date": "2024-01-01",
+        "last_updated": "2024-01-01",
+        "modalities": {"input": ["text"], "output": ["text"]},
+        "open_weights": False,
+        "limit": {"context": 1000000, "output": 131072},
+        "cost": {"input": 0, "output": 0, "cache_read": 0}
+    },
+    "hcnsec/minimax-m3": {
+        "id": "MiniMax-M3",
+        "name": "MiniMax-M3",
+        "description": "MiniMax-M3 via HCNsec API",
+        "family": "minimax",
+        "attachment": True,
+        "reasoning": True,
+        "reasoning_options": [
+            {"type": "toggle"},
+            {"type": "budget_tokens"}
+        ],
+        "tool_call": True,
+        "structured_output": True,
+        "temperature": True,
+        "release_date": "2024-01-01",
+        "last_updated": "2024-01-01",
+        "modalities": {"input": ["text"], "output": ["text"]},
+        "open_weights": False,
+        "limit": {"context": 1000000, "output": 131072},
+        "cost": {"input": 0, "output": 0, "cache_read": 0}
+    },
+    "hcnsec/step-3.7-flash": {
+        "id": "step-3.7-flash",
+        "name": "Step-3.7-Flash",
+        "description": "Step-3.7-Flash via HCNsec API",
+        "family": "step",
+        "attachment": True,
+        "reasoning": True,
+        "reasoning_options": [
+            {"type": "toggle"},
+            {"type": "budget_tokens"}
+        ],
+        "tool_call": True,
+        "structured_output": True,
+        "temperature": True,
+        "release_date": "2024-01-01",
+        "last_updated": "2024-01-01",
+        "modalities": {"input": ["text"], "output": ["text"]},
+        "open_weights": False,
+        "limit": {"context": 1000000, "output": 131072},
+        "cost": {"input": 0, "output": 0, "cache_read": 0}
+    },
+    "hcnsec/step-router-v1": {
+        "id": "step-router-v1",
+        "name": "Step-Router-V1",
+        "description": "Step-Router-V1 via HCNsec API",
+        "family": "step",
+        "attachment": True,
+        "reasoning": True,
+        "reasoning_options": [
+            {"type": "toggle"},
+            {"type": "budget_tokens"}
+        ],
+        "tool_call": True,
+        "structured_output": True,
+        "temperature": True,
+        "release_date": "2024-01-01",
+        "last_updated": "2024-01-01",
+        "modalities": {"input": ["text"], "output": ["text"]},
+        "open_weights": False,
+        "limit": {"context": 1000000, "output": 131072},
+        "cost": {"input": 0, "output": 0, "cache_read": 0}
+    },
+    "hcnsec/deepseek-v4-flash-vision-exp": {
+        "id": "DeepSeek-V4-Flash-Vision-Exp",
+        "name": "DeepSeek-V4-Flash-Vision-Exp",
+        "description": "DeepSeek V4 Flash Vision Exp via HCNsec API",
+        "family": "deepseek",
+        "attachment": True,
+        "reasoning": True,
+        "reasoning_options": [
+            {"type": "toggle"},
+            {"type": "budget_tokens"}
+        ],
+        "tool_call": True,
+        "structured_output": True,
+        "temperature": True,
+        "release_date": "2024-01-01",
+        "last_updated": "2024-01-01",
+        "modalities": {"input": ["text"], "output": ["text"]},
+        "open_weights": False,
+        "limit": {"context": 1000000, "output": 131072},
+        "cost": {"input": 0, "output": 0, "cache_read": 0}
     }
 }
 
@@ -397,7 +565,7 @@ main() {
     log_info "Setup Complete! ✅"
     log_info "========================================"
     log_info ""
-    log_info "Your HCNsec API is now configured with 4 models"
+    log_info "Your HCNsec API is now configured with 12 models"
     log_info ""
     log_info "To use in OpenCode:"
     log_info "  1. If you run in proot-distro, log in:"
