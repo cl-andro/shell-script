@@ -1,7 +1,7 @@
 #!/bin/bash
 # XKiro Setup Script for Opencode
 # Fully automatic setup - works on Termux, Proot, Debian 13/12
-# Creates/fixes models.json and configures all 35 free models
+# Creates/fixes models.json and configures all free models
 
 set -e
 
@@ -543,7 +543,25 @@ all_35_models = {
         "limit": {"context": 100000, "output": 8192},
         "cost": {"input": 0, "output": 0, "cache_read": 0}
     },
-    # Qwen models (18 free tier)
+    # Qwen models (19 free tier)
+    "qwen/qwen3.8-omni-flash:free": {
+        "id": "qwen/qwen3.8-omni-flash:free",
+        "name": "Qwen3.8-omni-flash:free",
+        "description": "Qwen3.8-omni-flash free tier via XKiro API",
+        "family": "qwen",
+        "attachment": True,
+        "reasoning": True,
+        "reasoning_options": [{"type": "toggle"}],
+        "tool_call": True,
+        "structured_output": True,
+        "temperature": True,
+        "release_date": "2024-01-01",
+        "last_updated": "2024-01-01",
+        "modalities": {"input": ["text"], "output": ["text"]},
+        "open_weights": False,
+        "limit": {"context": 100000, "output": 8192},
+        "cost": {"input": 0, "output": 0, "cache_read": 0}
+    },
     "qwen/qwen3.8-max:free": {
         "id": "qwen/qwen3.8-max:free",
         "name": "Qwen3.8-max:free",
@@ -949,7 +967,7 @@ for model_key, model_config in all_35_models.items():
 
 with open(models_json, 'w') as f:
     json.dump(data, f, indent=2)
-print(f"  -> Injected 35 models into {models_json}")
+print(f"  -> Injected {len(all_35_models)} models into {models_json}")
 
 # 4. Automatically append to shell config files (.bashrc, .profile, .zshrc)
 for rc in ['.bashrc', '.profile', '.zshrc']:
@@ -1027,7 +1045,7 @@ main() {
     log_info "Setup Complete! ✅"
     log_info "========================================"
     log_info ""
-    log_info "Your XKiro API is now configured with 35 free models:"
+    log_info "Your XKiro API is now configured with all 36 free models:"
     log_info ""
     
     # List available xkiro models
@@ -1053,7 +1071,7 @@ for path in [
                 break
         except Exception:
             pass
-" | head -35
+" | head -n 60
     
     log_info ""
     log_info "⚠️  To use in OpenCode:"
@@ -1061,7 +1079,7 @@ for path in [
     log_info "     proot-distro login debian"
     log_info "  2. Start OpenCode:"
     log_info "     opencode"
-    log_info "  3. Type /models and search 'xkiro' to see all 35 models!"
+    log_info "  3. Type /models and search 'xkiro' to see all models!"
     log_info ""
     log_info "Happy coding! 🚀"
 }
