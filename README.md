@@ -12,11 +12,15 @@
 
 ---
 
-One-command setup scripts that register **free / OpenAI-compatible LLM
-providers** in [OpenCode](https://opencode.ai). Each script is fully
-self-contained: it detects your environment, checks dependencies, optionally
-installs OpenCode, writes the provider config, stores the API key, exports the
-environment variables, and verifies the connection.
+One-command setup scripts that connect **cloud LLM provider API keys** to
+[OpenCode](https://opencode.ai). Each script is fully self-contained: it detects
+your environment, checks dependencies, optionally installs OpenCode, writes the
+provider config, stores the API key, exports the environment variables, and
+verifies the connection.
+
+Where a provider offers free-tier or trial models, those are included so you can
+confirm the key works and test the integration. The same scripts work with paid
+and production keys.
 
 Works on **Termux**, **PRoot Distro (Debian 13/12, Ubuntu)**, and **native
 Linux**.
@@ -58,23 +62,25 @@ for their credentials interactively.
 
 ### What each provider is for
 
-- **Cloudflare Workers AI** — 10,000 free neurons/day. Asks for your Account ID
-  and API token, verifies the token, and lets you pick the default model.
-- **Google AI Studio (Gemini)** — free-tier Gemini models through OpenCode's
+- **Cloudflare Workers AI** — Workers AI models using Cloudflare's daily neuron
+  allowance. Asks for your Account ID and API token, verifies the token, and
+  lets you pick the default model.
+- **Google AI Studio (Gemini)** — Gemini models through OpenCode's
   native `google` provider. Sets `google/gemini-2.5-flash` as the default.
-- **HCNsec** — 12 Chinese/frontier models behind one OpenAI-compatible key,
+- **HCNsec** — 12 Chinese/frontier models behind one API key,
   including DeepSeek V4.1 Flash, GLM 5.3 Flash, MiniMax M3, and Step 3.7 Flash.
 - **Inception Labs** — Mercury diffusion models: `mercury-3` (1M context),
   `mercury-2.5`, and `mercury-2`, with `instant`/`low`/`medium`/`high`
   reasoning effort.
-- **NEX (api.apinex.bond)** — free access to 16 models, including Claude Sonnet
+- **NEX (api.apinex.bond)** — 16 models, including Claude Sonnet
   4.6, Claude Opus 4.6, Kimi K3, Gemini 3.8 Flash, and DeepSeek V4 Pro.
 - **NVIDIA Build (NIM)** — fetches the live catalog, health-tests a curated list
   of NIM endpoints, and only registers models that answer. Also configures the
   native `nvidia` provider and compaction defaults.
-- **TokenHarbor** — 3 free models: DeepSeek V4.1 Flash, Mimo V2.6 Flash, and
+- **TokenHarbor** — 3 models: DeepSeek V4.1 Flash, Mimo V2.6 Flash, and
   Qwen 3.8 Flash.
-- **XKiro** — 36 models across GLM, MiniMax, Mistral, and Qwen (many `:free`).
+- **XKiro** — 36 models across GLM, MiniMax, Mistral, and Qwen; several are
+  free-tier endpoints useful for testing.
 
 ## What every script does
 
@@ -169,7 +175,7 @@ All three support tool calling, structured outputs, and `instant`, `low`,
 </details>
 
 <details>
-<summary><strong>NEX — 16 free models</strong></summary>
+<summary><strong>NEX — 16 models</strong></summary>
 
 `free/minimax-m3`, `free/gpt-6-luna`, `free/glm-5.3-flash`,
 `free/deepseek-v4.1-flash`, `free/deepseek-v4-pro-0813`,
@@ -181,7 +187,7 @@ All three support tool calling, structured outputs, and `instant`, `low`,
 </details>
 
 <details>
-<summary><strong>TokenHarbor — 3 free models</strong></summary>
+<summary><strong>TokenHarbor — 3 models</strong></summary>
 
 `deepseek-v4.1-flash:free`, `mimo-v2.6-flash:free`, `qwen3.8-flash:free`
 
@@ -279,7 +285,7 @@ opencode -m inception/mercury-3
   except the provider's own API endpoint.
 - Provider endpoints are third-party services. Review their terms and privacy
   policies before sending code or data.
-- Free-tier quotas, model availability, and pricing can change at any time.
+- Quotas, model availability, and pricing can change at any time.
 - Review any script before running it, especially when it was downloaded from
   the internet.
 
@@ -292,7 +298,7 @@ opencode -m inception/mercury-3
 | `opencode: command not found` | Install it: `curl -fsSL https://opencode.ai/install \| bash` |
 | Config not picked up in PRoot | Log into the distro and run the script there, or use the rootfs path it detects |
 | Wrong home directory configured | Check `~/.config/opencode/` for the current user; the script prints every home it writes to |
-| Free model missing | The provider may have rotated or retired it — update the model list in the script |
+| Model missing | The provider may have rotated or retired it — update the model list in the script |
 
 ## Repository layout
 
