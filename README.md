@@ -57,6 +57,7 @@ for their credentials interactively.
 | [`inception-setup.sh`](inception-setup.sh) | `inception` | `https://api.inceptionlabs.ai/v1` | `INCEPTION_API_KEY` | 3 |
 | [`nex-setup.sh`](nex-setup.sh) | `nex` | `https://api.apinex.bond/v1` | `NEX_API_KEY` | 16 |
 | [`nvidia-setup.sh`](nvidia-setup.sh) | `nvidia`, `nvidia-build` | `https://integrate.api.nvidia.com/v1` | `NVIDIA_API_KEY` | live-tested curated NIM list |
+| [`radox-setup.sh`](radox-setup.sh) | `RadoxAI` | `https://radoxai.com/v1` | `RADOX_API_KEY` | 1 |
 | [`token-harbor-setup.sh`](token-harbor-setup.sh) | `tokenharbor` | `https://tokenharbor.ai/v1` | `TOKENHARBOR_API_KEY` | 3 |
 | [`xkiro-setup.sh`](xkiro-setup.sh) | `xkiro` | `https://api.xkiro.com/v1` | `XKIRO_API_KEY` | 36 |
 
@@ -77,6 +78,8 @@ for their credentials interactively.
 - **NVIDIA Build (NIM)** — fetches the live catalog, health-tests a curated list
   of NIM endpoints, and only registers models that answer. Also configures the
   native `nvidia` provider and compaction defaults.
+- **Radox AI** — one model, `claude-opus-4.8`, through
+  `https://radoxai.com/v1` using a `cc_`-prefixed API key.
 - **TokenHarbor** — 3 models: DeepSeek V4.1 Flash, Mimo V2.6 Flash, and
   Qwen 3.8 Flash.
 - **XKiro** — 36 models across GLM, MiniMax, Mistral, and Qwen; several are
@@ -183,6 +186,13 @@ All three support tool calling, structured outputs, and `instant`, `low`,
 `free/hy4`, `free/kimi-k3`, `free/claude-opus-4.6`, `free/gemini-3.8-flash`,
 `free/muse-spark-1.3`, `free/gemini-3.1-pro`, `free/deepseek-v4-flash-0731`,
 `free/qwen-3.8-max`
+
+</details>
+
+<details>
+<summary><strong>Radox AI — 1 model</strong></summary>
+
+`claude-opus-4.8`
 
 </details>
 
