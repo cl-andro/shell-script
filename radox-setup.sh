@@ -1,7 +1,7 @@
 #!/bin/bash
 # Radox AI Setup Script for Opencode
 # Fully automatic setup - works on Termux, Proot, Debian 13/12
-# Creates/fixes models.json and configures the Radox AI model
+# Creates/fixes models.json and configures the full Radox AI model catalog
 
 set -e
 
@@ -177,18 +177,121 @@ setup_models_for_user() {
     python3 << 'PYEOFSCRIPT'
 import json
 import os
+import urllib.request
 
 USER_HOME = os.environ.get('USER_HOME', os.path.expanduser('~'))
 API_KEY = os.environ.get('RADOX_API_KEY', '')
 
-# Free model definitions to add under RadoxAI
-all_free_models = {
-    "claude-opus-4.8": {
-        "id": "claude-opus-4.8",
-        "name": "claude-opus-4.8",
-        "description": "Claude Opus 4.8 via Radox AI API",
-        "family": "claude",
-        "attachment": True,
+# Radox AI catalog (33 models).
+# Tuple layout: (display name, context window, input $/1M, output $/1M,
+#                capabilities, description)
+MODEL_SPECS = {
+    "claude-fable-5": ("Claude Fable 5", 1000000, 16.606, 16.606, ["reasoning", "vision", "tools", "streaming", "json_mode"], "Anthropic premium model. Outstanding coding and reasoning with top Code Arena score."),
+    "claude-fable-5.1": ("Claude Fable 5.1", 1000000, 16.606, 16.606, ["reasoning", "vision", "tools", "streaming", "json_mode"], "Anthropic premium model. Outstanding coding and reasoning with top Code Arena score."),
+    "claude-mythos-preview": ("Claude Mythos Preview", 1000000, 8.303, 8.303, ["reasoning", "vision", "tools", "streaming", "json_mode"], "Anthropic next-gen preview model. Cutting-edge reasoning, not yet generally released."),
+    "claude-opus-4.6": ("Claude Opus 4.6", 1000000, 8.303, 8.303, ["reasoning", "vision", "tools", "streaming", "json_mode"], "Anthropic Opus-class model. Reliable reasoning and agentic performance."),
+    "claude-opus-4.7": ("Claude Opus 4.7", 1000000, 8.303, 8.303, ["reasoning", "vision", "tools", "streaming", "json_mode"], "Anthropic Opus-class model. Strong coding and reasoning, high Code Arena score."),
+    "claude-opus-4.8": ("Claude Opus 4.8", 1000000, 8.303, 8.303, ["reasoning", "vision", "tools", "streaming", "json_mode"], "Anthropic Opus-class model. Reliable reasoning and coding performance."),
+    "claude-opus-5": ("Claude Opus 5", 1000000, 8.303, 8.303, ["reasoning", "vision", "tools", "streaming", "json_mode"], "Anthropic's most capable model. Exceptional reasoning and agentic performance."),
+    "claude-opus-5.5": ("Claude Opus 5.5", 1000000, 8.303, 8.303, ["reasoning", "vision", "tools", "streaming", "json_mode"], "Anthropic's most capable model. Exceptional reasoning and agentic performance."),
+    "claude-sonnet-5": ("Claude Sonnet 5", 1000000, 3.3235, 3.3235, ["reasoning", "vision", "tools", "streaming", "json_mode"], "Anthropic balanced model. Great coding and reasoning at a lower cost."),
+    "deepseek-v4-flash-0731": ("DeepSeek-V4-Flash-0731", 1048576, 0.115, 0.115, ["reasoning", "tools", "streaming", "json_mode"], "DeepSeek fast open model. Very affordable with solid reasoning, 304B params."),
+    "deepseek-v4-pro-0813": ("DeepSeek-V4-Pro-0813", 1048576, 0.552, 0.552, ["reasoning", "tools", "streaming", "json_mode"], "DeepSeek open-source pro model. Excellent reasoning and coding, 1.6T params."),
+    "deepseek-v4-pro-max": ("DeepSeek-V4-Pro-Max", 1048576, 2.047, 2.047, ["reasoning", "tools", "streaming", "json_mode"], "DeepSeek top open model. Maximum capability with 1.6T params."),
+    "gemini-3.1-pro": ("Gemini 3.1 Pro", 1048576, 4.4735, 4.4735, ["reasoning", "vision", "tools", "streaming", "json_mode", "web_search"], "Google pro model. Strong reasoning and coding with high Code Arena score."),
+    "gemini-3.6-flash": ("Gemini 3.6 Flash", 1048576, 2.4955, 2.4955, ["reasoning", "vision", "tools", "streaming", "json_mode", "web_search"], "Google fast model. Very quick responses with good reasoning, 364c/s."),
+    "gemini-3.7-flash": ("Gemini 3.7 Flash", 1048576, 1.242, 1.242, ["reasoning", "vision", "tools", "streaming", "json_mode", "web_search"], "Google latest Flash model. Very fast with strong reasoning, 479c/s."),
+    "gemma-2-2b": ("Gemma 2 2B", 8192, 0.115, 0.23, ["streaming", "json_mode"], "Lightweight open model by Google. Fast and efficient for everyday tasks."),
+    "glm-5.2": ("GLM-5.2", 1000000, 1.357, 1.357, ["reasoning", "vision", "tools", "streaming", "json_mode", "web_search"], "Zhipu AI open model. Good reasoning and coding, 753B params."),
+    "glm-5.3": ("GLM-5.3", 1000000, 1.357, 1.357, ["reasoning", "vision", "tools", "streaming", "json_mode", "web_search"], "Zhipu AI latest model. Strong reasoning and agentic capability, 753B params."),
+    "gpt-5.5": ("GPT-5.5", 1050000, 8.947, 8.947, ["reasoning", "vision", "tools", "streaming", "json_mode"], "OpenAI capable model. Solid reasoning and coding performance."),
+    "gpt-5.5-pro": ("GPT-5.5 Pro", 1050000, 8.947, 8.947, ["reasoning", "vision", "tools", "streaming", "json_mode"], "OpenAI pro-tier model. Enhanced reasoning and coding over base 5.5."),
+    "gpt-5.6-luna": ("GPT-5.6 Luna", 1050000, 0.3565, 0.3565, ["reasoning", "vision", "tools", "streaming", "json_mode"], "OpenAI efficient model. Great value with strong reasoning, 290c/s speed."),
+    "gpt-5.6-sol": ("GPT-5.6 Sol", 1050000, 8.947, 8.947, ["reasoning", "vision", "tools", "streaming", "json_mode"], "OpenAI flagship model. Top-tier reasoning, coding, and agentic capability."),
+    "gpt-5.6-terra": ("GPT-5.6 Terra", 1050000, 3.5765, 3.5765, ["reasoning", "vision", "tools", "streaming", "json_mode"], "OpenAI high-end model. Strong reasoning and coding at a mid price point."),
+    "grok-4.5": ("Grok 4.5", 500000, 2.806, 2.806, ["reasoning", "vision", "tools", "streaming", "json_mode", "web_search"], "xAI model. Strong reasoning and agentic capability."),
+    "grok-4.6": ("Grok 4.6", 500000, 2.806, 2.806, ["reasoning", "vision", "tools", "streaming", "json_mode", "web_search"], "xAI latest model. Improved reasoning and coding over 4.5."),
+    "kimi-k2.6": ("Kimi K2.6", 1000000, 1.219, 1.219, ["reasoning", "vision", "tools", "streaming", "json_mode", "web_search"], "Moonshot AI open model. Strong reasoning and coding, 1.0T params."),
+    "kimi-k3": ("Kimi K3", 1000000, 4.9795, 4.9795, ["reasoning", "vision", "tools", "streaming", "json_mode", "web_search"], "Moonshot AI open-source flagship. Strong reasoning and coding, 2.8T params."),
+    "muse-spark-1.1": ("Muse Spark 1.1", 1000000, 1.817, 1.817, ["reasoning", "vision", "tools", "streaming", "json_mode"], "Meta Muse Spark series. Fast and capable with strong reasoning scores."),
+    "qwen3.7-max": ("Qwen3.7 Max", 1000000, 1.7595, 1.7595, ["reasoning", "vision", "tools", "streaming", "json_mode", "web_search"], "Alibaba Qwen pro model. Strong reasoning and coding performance."),
+    "qwen3.8-27b": ("Qwen3.8-27B", 262144, 0.575, 0.575, ["reasoning", "tools", "streaming", "json_mode"], "Alibaba Qwen compact open model. Efficient 27.8B params with solid capability."),
+    "qwen3.8-max": ("Qwen3.8 Max", 1000000, 1.7595, 1.7595, ["reasoning", "vision", "tools", "streaming", "json_mode", "web_search"], "Alibaba Qwen flagship open model. Strong all-round capability, 2.4T params."),
+    "seed-2.1-pro": ("Seed 2.1 Pro", 262144, 1.15, 1.15, ["reasoning", "vision", "tools", "streaming", "json_mode"], "ByteDance Seed series pro model. Strong reasoning and coding."),
+    "seed-2.1-turbo": ("Seed 2.1 Turbo", 262144, 0.92, 0.92, ["reasoning", "vision", "tools", "streaming", "json_mode"], "ByteDance Seed turbo model. Fast with solid reasoning and coding."),
+}
+
+FAMILY_PREFIXES = ("claude", "deepseek", "gemini", "gemma", "glm", "gpt",
+                   "grok", "kimi", "muse", "qwen", "seed")
+
+
+def family_of(model_id):
+    for prefix in FAMILY_PREFIXES:
+        if model_id.startswith(prefix):
+            return prefix
+    return model_id.split("-")[0]
+
+
+def build_model(model_id, spec):
+    name, context, cost_in, cost_out, caps, description = spec
+    reasoning = "reasoning" in caps
+    model = {
+        "id": model_id,
+        "name": name,
+        "description": description,
+        "family": family_of(model_id),
+        "attachment": "vision" in caps,
+        "reasoning": reasoning,
+        "tool_call": "tools" in caps,
+        "structured_output": "json_mode" in caps,
+        "temperature": True,
+        "release_date": "2024-01-01",
+        "last_updated": "2024-01-01",
+        "modalities": {"input": ["text"], "output": ["text"]},
+        "open_weights": False,
+        "limit": {"context": context, "output": 8192},
+        "cost": {"input": cost_in, "output": cost_out, "cache_read": 0}
+    }
+    if reasoning:
+        model["reasoning_options"] = [{"type": "toggle"}]
+    return model
+
+
+def fetch_live_model_ids(api_key):
+    """Ask /v1/models for the models this key can access."""
+    if not api_key:
+        return []
+    request = urllib.request.Request(
+        "https://radoxai.com/v1/models",
+        headers={
+            "Authorization": "Bearer " + api_key,
+            "Accept": "application/json",
+            "User-Agent": "curl/8.5.0",
+        },
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=20) as response:
+            payload = json.load(response)
+        return [entry["id"] for entry in payload.get("data", []) if entry.get("id")]
+    except Exception:
+        return []
+
+
+all_models = {model_id: build_model(model_id, spec)
+              for model_id, spec in MODEL_SPECS.items()}
+
+# Add any newly published models the key can see but the built-in list lacks
+live_ids = fetch_live_model_ids(API_KEY)
+added_live = []
+for model_id in live_ids:
+    if model_id in all_models:
+        continue
+    all_models[model_id] = {
+        "id": model_id,
+        "name": model_id,
+        "description": "Radox AI model discovered via /v1/models",
+        "family": family_of(model_id),
+        "attachment": False,
         "reasoning": True,
         "reasoning_options": [{"type": "toggle"}],
         "tool_call": True,
@@ -198,10 +301,16 @@ all_free_models = {
         "last_updated": "2024-01-01",
         "modalities": {"input": ["text"], "output": ["text"]},
         "open_weights": False,
-        "limit": {"context": 200000, "output": 64000},
-        "cost": {"input": 0, "output": 0, "cache_read": 0}
+        "limit": {"context": 128000, "output": 8192}
     }
-}
+    added_live.append(model_id)
+
+if live_ids:
+    print(f"  -> Live catalog: {len(live_ids)} models accessible with this key")
+elif API_KEY:
+    print("  -> Live catalog unavailable, using built-in 33-model list")
+if added_live:
+    print(f"  -> Added {len(added_live)} live-only model(s): {', '.join(sorted(added_live))}")
 
 ## 1. Update ~/.config/opencode/opencode.jsonc (and opencode.json)
 config_dir = os.path.join(USER_HOME, '.config', 'opencode')
@@ -227,7 +336,7 @@ config_data['provider']['RadoxAI'] = {
         "baseURL": "https://radoxai.com/v1",
         "apiKey": API_KEY
     },
-    "models": all_free_models
+    "models": all_models
 }
 
 with open(config_path, 'w') as f:
@@ -277,12 +386,12 @@ if 'RadoxAI' not in data or not isinstance(data['RadoxAI'], dict):
 if 'models' not in data['RadoxAI'] or not isinstance(data['RadoxAI']['models'], dict):
     data['RadoxAI']['models'] = {}
 
-for model_key, model_config in all_free_models.items():
+for model_key, model_config in all_models.items():
     data['RadoxAI']['models'][model_key] = model_config
 
 with open(models_json, 'w') as f:
     json.dump(data, f, indent=2)
-print(f"  -> Injected {len(all_free_models)} models into {models_json}")
+print(f"  -> Injected {len(all_models)} models into {models_json}")
 
 # 4. Automatically append to shell config files (.bashrc, .profile, .zshrc)
 for rc in ['.bashrc', '.profile', '.zshrc']:
@@ -360,7 +469,7 @@ main() {
     log_info "Setup Complete! ✅"
     log_info "========================================"
     log_info ""
-    log_info "Your Radox AI API is now configured with the model:"
+    log_info "Your Radox AI API is now configured with the full model catalog:"
     log_info ""
     
     # List available RadoxAI models
@@ -381,12 +490,12 @@ for path in [
             if not models and 'RadoxAI' in d:
                 models = list(d['RadoxAI'].get('models', {}).keys())
             if models:
-                for i, m in enumerate(models, 1):
+                for i, m in enumerate(sorted(models), 1):
                     print(f'  {i}. {m}')
                 break
         except Exception:
             pass
-" | head -n 20
+" | head -n 60
     
     log_info ""
     log_info "⚠️  To use in OpenCode:"
@@ -394,7 +503,7 @@ for path in [
     log_info "     proot-distro login debian"
     log_info "  2. Start OpenCode:"
     log_info "     opencode"
-    log_info "  3. Type /models and search 'RadoxAI' to see the model!"
+    log_info "  3. Type /models and search 'RadoxAI' to see all models!"
     log_info ""
     log_info "Happy coding! 🚀"
 }

@@ -57,7 +57,7 @@ for their credentials interactively.
 | [`inception-setup.sh`](inception-setup.sh) | `inception` | `https://api.inceptionlabs.ai/v1` | `INCEPTION_API_KEY` | 3 |
 | [`nex-setup.sh`](nex-setup.sh) | `nex` | `https://api.apinex.bond/v1` | `NEX_API_KEY` | 16 |
 | [`nvidia-setup.sh`](nvidia-setup.sh) | `nvidia`, `nvidia-build` | `https://integrate.api.nvidia.com/v1` | `NVIDIA_API_KEY` | live-tested curated NIM list |
-| [`radox-setup.sh`](radox-setup.sh) | `RadoxAI` | `https://radoxai.com/v1` | `RADOX_API_KEY` | 1 |
+| [`radox-setup.sh`](radox-setup.sh) | `RadoxAI` | `https://radoxai.com/v1` | `RADOX_API_KEY` | 33 + live catalog refresh |
 | [`token-harbor-setup.sh`](token-harbor-setup.sh) | `tokenharbor` | `https://tokenharbor.ai/v1` | `TOKENHARBOR_API_KEY` | 3 |
 | [`xkiro-setup.sh`](xkiro-setup.sh) | `xkiro` | `https://api.xkiro.com/v1` | `XKIRO_API_KEY` | 36 |
 
@@ -78,8 +78,10 @@ for their credentials interactively.
 - **NVIDIA Build (NIM)** — fetches the live catalog, health-tests a curated list
   of NIM endpoints, and only registers models that answer. Also configures the
   native `nvidia` provider and compaction defaults.
-- **Radox AI** — one model, `claude-opus-4.8`, through
-  `https://radoxai.com/v1` using a `cc_`-prefixed API key.
+- **Radox AI** — the full 33-model catalog behind one `cc_`-prefixed key,
+  spanning Claude (Fable, Mythos, Opus, Sonnet), GPT-5.5/5.6, Gemini, Grok,
+  Kimi, Qwen, DeepSeek, GLM, Seed, Muse Spark, and Gemma. The script also
+  queries `/v1/models` with your key and registers any newer models it finds.
 - **TokenHarbor** — 3 models: DeepSeek V4.1 Flash, Mimo V2.6 Flash, and
   Qwen 3.8 Flash.
 - **XKiro** — 36 models across GLM, MiniMax, Mistral, and Qwen; several are
@@ -190,9 +192,22 @@ All three support tool calling, structured outputs, and `instant`, `low`,
 </details>
 
 <details>
-<summary><strong>Radox AI — 1 model</strong></summary>
+<summary><strong>Radox AI — 33 models</strong></summary>
 
-`claude-opus-4.8`
+- **Claude:** `claude-fable-5`, `claude-fable-5.1`, `claude-mythos-preview`,
+  `claude-opus-4.6`, `claude-opus-4.7`, `claude-opus-4.8`, `claude-opus-5`,
+  `claude-opus-5.5`, `claude-sonnet-5`
+- **OpenAI:** `gpt-5.5`, `gpt-5.5-pro`, `gpt-5.6-luna`, `gpt-5.6-sol`,
+  `gpt-5.6-terra`
+- **Google:** `gemini-3.1-pro`, `gemini-3.6-flash`, `gemini-3.7-flash`,
+  `gemma-2-2b`
+- **Others:** `deepseek-v4-flash-0731`, `deepseek-v4-pro-0813`,
+  `deepseek-v4-pro-max`, `glm-5.2`, `glm-5.3`, `grok-4.5`, `grok-4.6`,
+  `kimi-k2.6`, `kimi-k3`, `muse-spark-1.1`, `qwen3.7-max`, `qwen3.8-27b`,
+  `qwen3.8-max`, `seed-2.1-pro`, `seed-2.1-turbo`
+
+Context windows range from 8K (`gemma-2-2b`) to ~1M tokens; most models
+support reasoning, vision, tools, and JSON mode.
 
 </details>
 
